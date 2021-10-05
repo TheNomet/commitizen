@@ -28,6 +28,9 @@ info_path = "cz_customize_info.txt"
 info = """
 This is customized info
 """
+commit_parser = "^(?P<change_type>feature|bug fix):\\s(?P<message>.*)?"
+changelog_pattern = "^(feature|bug fix)?(!)?"
+change_type_map = {"feature" = "Feat", "bug fix" = "Fix"}
 
 [[tool.commitizen.customize.questions]]
 type = "list"
@@ -68,6 +71,9 @@ The equivalent example for a json config file:
             "change_type_order": ["BREAKING CHANGE", "feat", "fix", "refactor", "perf"],
 	    "info_path": "cz_customize_info.txt",
             "info": "This is customized info",
+            "commit_parser": "^(?P<change_type>feature|bug fix):\\s(?P<message>.*)?",
+            "changelog_pattern": "^(feature|bug fix)?(!)?",
+            "change_type_map": {"feature": "Feat", "bug fix": "Fix"},
             "questions": [
                 {
                     "type": "list",
@@ -111,6 +117,11 @@ commitizen:
     schema: "<type>: <body>"
     schema_pattern: "(feature|bug fix):(\\s.*)"
     bump_pattern: "^(break|new|fix|hotfix)"
+    commit_parser: "^(?P<change_type>feature|bug fix):\\s(?P<message>.*)?",
+    changelog_pattern: "^(feature|bug fix)?(!)?",
+    change_type_map:
+      feature: Feat
+      bug fix: Fix
     bump_map:
       break: MAJOR
       new: MINOR
@@ -150,8 +161,12 @@ commitizen:
 | `bump_map`          | `dict` | `None`  | (OPTIONAL) Dictionary mapping the extracted information to a `SemVer` increment type (`MAJOR`, `MINOR`, `PATCH`)                                                                                                                 |
 | `bump_pattern`      | `str`  | `None`  | (OPTIONAL) Regex to extract information from commit (subject and body)                                                                                                                                                           |
 | `change_type_order` | `str`  | `None`  | (OPTIONAL) List of strings used to order the Changelog. All other types will be sorted alphabetically. Default is `["BREAKING CHANGE", "feat", "fix", "refactor", "perf"]`                                                       |
+| `commit_parser`     | `str`  | `None`  | (OPTIONAL) Regex to extract information used in creating changelog. [See more][changelog-spec]                                                                                                                                   |
+| `changelog_pattern` | `str`  | `None`  | (OPTIONAL) Regex to understand which commits to include in the changelog                                                                                                                                                         |
+| `change_type_map`   | `dict` | `None`  | (OPTIONAL) Dictionary mapping the type of the commit to a changelog entry                                                                                                                                                        |
 
 [jinja2]: https://jinja.palletsprojects.com/en/2.10.x/
+[changelog-spec]: https://commitizen-tools.github.io/commitizen/changelog/
 #### Detailed `questions` content
 
 | Parameter | Type   | Default | Description                                                                                                                                                                                     |
@@ -170,7 +185,7 @@ commitizen:
 When the [`use_shortcuts`](https://commitizen-tools.github.io/commitizen/config/#settings) config option is enabled, commitizen can show and use keyboard shortcuts to select items from lists directly.
 For example, when using the `cz_conventional_commits` commitizen template, shortcut keys are shown when selecting the commit type. Unless otherwise defined, keyboard shortcuts will be numbered automatically.
 To specify keyboard shortcuts for your custom choices, provide the shortcut using the `key` parameter in dictionary form for each choice you would like to customize.
- 
+
 ## 2. Customize through customizing a class
 
 The basic steps are:
