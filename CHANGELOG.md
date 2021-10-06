@@ -1,4 +1,14 @@
 
+## v2.20.0 (2021-10-06)
+
+### Fix
+
+- **scripts/test**: excluding venv folder from pydocstyle checks
+
+### Feat
+
+- **customize.py**: adding support for commit_parser, changelog_pattern, change_type_map
+
 ## v2.19.0 (2021-09-27)
 
 ### Feat
